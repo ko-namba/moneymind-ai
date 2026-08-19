@@ -17,7 +17,14 @@ function detectCategory(question: string): ExpenseCategory | null {
   return null;
 }
 
-function formatSourceLines(sources: ChatSource[]): string {
+type SourceLine = {
+  date: string;
+  category: string;
+  description: string;
+  amount: number;
+};
+
+function formatSourceLines(sources: SourceLine[]): string {
   return sources
     .slice(0, 5)
     .map(
