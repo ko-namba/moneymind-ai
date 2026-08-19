@@ -52,7 +52,10 @@ export async function createExpense(input: ExpenseInputValidated): Promise<Expen
     .single();
 
   if (error || !data) {
-    throw new Error(`支出の登録に失敗しました: ${error?.message ?? "不明"}`);
+    // `fetch failed` のような情報不足のエラーでも原因に近いヒントを返す
+    throw new Error(
+      formatSupabaseConnectionError("支出の登録に失敗しました。", error),
+    );
   }
 
   const expense = mapRowToExpense(data as ExpenseRow);
