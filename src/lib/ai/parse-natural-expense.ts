@@ -1,5 +1,5 @@
 import { getAIProvider, getGeminiKeyIssue, isGeminiEnabled } from "@/lib/ai/config";
-import { toGeminiUserMessage } from "@/lib/ai/errors";
+import { isRecoverableAIError, toGeminiUserMessage } from "@/lib/ai/errors";
 import { isGeminiQuotaError } from "@/lib/ai/gemini";
 import { parseNaturalExpenseWithGemini } from "@/lib/ai/parse-natural-expense-gemini";
 import { parseNaturalExpenseWithRules } from "@/lib/ai/parse-natural-expense-rules";
