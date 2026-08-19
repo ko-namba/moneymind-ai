@@ -15,7 +15,7 @@ export function MonthlySummary({ summary }: MonthlySummaryProps) {
   const isDecrease = difference < 0;
 
   return (
-    <section className="grid gap-8 sm:grid-cols-3 sm:gap-10">
+    <section className="grid gap-10 text-center sm:grid-flow-col sm:auto-cols-max sm:justify-center sm:gap-25">
       <div>
         <p className="text-sm" style={{ color: "var(--mf-text)" }}>
           {year}年{month}月の支出
@@ -58,9 +58,9 @@ export function MonthlySummary({ summary }: MonthlySummaryProps) {
               className="text-2xl font-semibold"
               style={{
                 color: isIncrease
-                  ? "#c94444"
+                  ? "#cd4458"
                   : isDecrease
-                    ? "var(--mf-primary-dark)"
+                    ? "#2f7fb5"
                     : "var(--mf-text-strong)",
               }}
             >
@@ -72,10 +72,10 @@ export function MonthlySummary({ summary }: MonthlySummaryProps) {
                 className="mt-0.5 text-sm"
                 style={{
                   color: isIncrease
-                    ? "#c94444"
-                    : isDecrease
-                      ? "var(--mf-primary-dark)"
-                      : "var(--mf-text)",
+                    ? "#cd4458"
+                      : isDecrease
+                        ? "#2f7fb5"
+                        : "var(--mf-text)",
                 }}
               >
                 {isIncrease ? "+" : ""}

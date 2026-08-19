@@ -1,3 +1,4 @@
+import { isEmbeddingEnabled } from "@/lib/ai/config";
 import { createSupabaseAdmin } from "@/lib/db/supabase";
 import { embedText, embedTexts } from "@/lib/rag/embeddings";
 
@@ -10,6 +11,10 @@ export async function syncExpenseEmbedding(
   expenseId: string,
   content: string,
 ): Promise<void> {
+  if (!isEmbeddingEnabled()) {
+    return;
+  }
+
   try {
     const embedding = await embedText(content);
     const supabase = createSupabaseAdmin();
@@ -28,6 +33,10 @@ export async function syncExpenseEmbedding(
 }
 
 export async function ensureExpenseEmbeddings(): Promise<number> {
+  if (!isEmbeddingEnabled()) {
+    return 0;
+  }
+
   const supabase = createSupabaseAdmin();
 
   const { data, error } = await supabase

@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --mf-primary: #2b9fd4;
-  --mf-primary-hover: #228fbe;
-  --mf-primary-dark: #187aa3;
-  --mf-primary-light: #dceef8;
-  --mf-primary-subtle: #edf6fb;
-  --mf-orange: #de7359;
-  --mf-orange-hover: #c95f47;
-  --mf-orange-text: #b8523d;
-  --mf-orange-subtle: #fdf0ec;
-  --mf-bg: #eef2f6;
-  --mf-surface: #ffffff;
-  --mf-text: #3f4d5c;
-  --mf-text-strong: #15202b;
-  --mf-border: #d5dee8;
-  --mf-divider: #dde5ed;
+  --mf-primary: #1f3350;
+  --mf-primary-hover: #16243a;
+  --mf-primary-dark: #16243a;
+  --mf-primary-light: #dbe1ea;
+  --mf-primary-subtle: #eceff4;
+  --mf-orange: #d98337;
+  --mf-orange-hover: #c26f2c;
+  --mf-orange-text: #b4682a;
+  --mf-orange-subtle: #f8e9d2;
+  --mf-bg: #f7f3e9;
+  --mf-surface: #fdfbf4;
+  --mf-text: #5c584e;
+  --mf-text-strong: #26241f;
+  --mf-border: #d8cfb8;
+  --mf-divider: #e2dac6;
   --mf-radius-sm: 1rem;
   --mf-radius-md: 1.25rem;
   --mf-radius-lg: 1.75rem;
@@ -28,6 +28,10 @@
 @theme inline {
   --font-sans: var(--font-rounded), "Hiragino Maru Gothic ProN", ui-sans-serif,
     system-ui, sans-serif;
+}
+
+html {
+  font-size: 18px;
 }
 
 body {
@@ -159,7 +163,7 @@ body {
 
   .mm-input:focus {
     border-color: var(--mf-primary);
-    box-shadow: 0 0 0 4px rgba(43, 159, 212, 0.2);
+    box-shadow: 0 0 0 4px rgba(31, 51, 80, 0.18);
     transform: translateY(-1px);
   }
 
@@ -176,7 +180,7 @@ body {
   .mm-btn:hover {
     background-color: var(--mf-primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(43, 159, 212, 0.28);
+    box-shadow: 0 6px 18px rgba(31, 51, 80, 0.26);
   }
 
   .mm-btn-accent {
@@ -192,7 +196,7 @@ body {
   .mm-btn-accent:hover {
     background-color: var(--mf-orange-hover);
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(222, 115, 89, 0.28);
+    box-shadow: 0 6px 18px rgba(184, 118, 62, 0.3);
   }
 
   .mm-btn-outline {
@@ -220,7 +224,7 @@ body {
   }
 
   .mm-btn-ghost:hover {
-    color: #c94444;
+    color: #a8334c;
     transform: translateY(-1px);
   }
 
@@ -238,7 +242,7 @@ body {
   .mm-chip:hover {
     background-color: var(--mf-primary-light);
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(15, 40, 80, 0.06);
+    box-shadow: 0 4px 14px rgba(38, 36, 31, 0.08);
   }
 
   .mm-badge {

@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { CategoryChart } from "@/components/CategoryChart";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseList } from "@/components/ExpenseList";
+import { MonthNavigator } from "@/components/MonthNavigator";
 import { MonthlySummary } from "@/components/MonthlySummary";
 import { NaturalInput } from "@/components/NaturalInput";
 import { SeedDataButton } from "@/components/SeedDataButton";
@@ -19,14 +21,35 @@ export function DashboardContent() {
   const { expenses, loading, error, addExpense, removeExpense, editExpense, reload } =
     useExpenses();
 
-  const monthlySummary = calcMonthlyComparison(expenses);
-  const currentMonthExpenses = filterExpensesByMonth(
-    expenses,
-    monthlySummary.year,
-    monthlySummary.month,
+  const now = new Date();
+  const [year, setYear] = useState(now.getFullYear());
+  const [month, setMonth] = useState(now.getMonth() + 1);
+
+  const referenceDate = useMemo(
+    () => new Date(year, month - 1, 1),
+    [year, month],
   );
-  const categoryTotals = calcCategoryTotals(currentMonthExpenses);
-  const categoryComparisons = calcCategoryMonthlyComparisons(expenses);
+
+  const monthlySummary = useMemo(
+    () => calcMonthlyComparison(expenses, referenceDate),
+    [expenses, referenceDate],
+  );
+
+  const monthExpenses = useMemo(
+    () => filterExpensesByMonth(expenses, year, month),
+    [expenses, year, month],
+  );
+
+  const categoryTotals = useMemo(
+    () => calcCategoryTotals(monthExpenses),
+    [monthExpenses],
+  );
+
+  const categoryComparisons = useMemo(
+    () => calcCategoryMonthlyComparisons(expenses, referenceDate),
+    [expenses, referenceDate],
+  );
+
   const recentExpenses = expenses.slice(0, 5);
 
   return (
@@ -37,11 +60,23 @@ export function DashboardContent() {
 
       {error && <p className="mm-alert-error">{error}</p>}
 
-      <section className="mm-page-section">
+      <section className="mm-page-section space-y-4">
+        <MonthNavigator
+          year={year}
+          month={month}
+          onChange={(nextYear, nextMonth) => {
+            setYear(nextYear);
+            setMonth(nextMonth);
+          }}
+        />
         <CategoryChart
+          key={`${year}-${month}`}
           data={categoryTotals}
           comparisons={categoryComparisons}
-          title="今月のカテゴリ別支出"
+          expenses={monthExpenses}
+          title={`${year}年${month}月の支出`}
+          titleClassName="text-2xl sm:text-3xl text-center"
+          emptyMessage={`${year}年${month}月の支出データがありません。`}
         />
       </section>
 

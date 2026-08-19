@@ -1,3 +1,4 @@
+import { isEmbeddingEnabled } from "@/lib/ai/config";
 import { createSupabaseAdmin } from "@/lib/db/supabase";
 import { listExpenses } from "@/lib/expenses/repository";
 import {
@@ -6,6 +7,7 @@ import {
   filterExpensesByMonth,
 } from "@/lib/expenses/summary";
 import { embedText } from "@/lib/rag/embeddings";
+import { retrieveRelevantExpensesByKeyword } from "@/lib/rag/keyword-retriever";
 import { ensureExpenseEmbeddings } from "@/lib/rag/sync-embedding";
 import type { ChatSource } from "@/types/chat";
 
@@ -27,64 +29,79 @@ export async function retrieveRelevantExpenses(
   query: string,
   limit = 5,
 ): Promise<ChatSource[]> {
-  await ensureExpenseEmbeddings();
-
-  const queryEmbedding = await embedText(query);
-  const supabase = createSupabaseAdmin();
-
-  const { data, error } = await supabase.rpc("match_expense_embeddings", {
-    query_embedding: queryEmbedding,
-    match_count: limit,
-    match_threshold: 0.25,
-  });
-
-  if (error) {
-    if (error.message.includes("match_expense_embeddings")) {
-      throw new Error(
-        "ベクトル検索関数が未設定です。Supabase SQL Editor で docs/supabase/rag-functions.sql を実行してください。",
-      );
-    }
-    throw new Error(`ベクトル検索に失敗しました: ${error.message}`);
+  if (!isEmbeddingEnabled()) {
+    return retrieveRelevantExpensesByKeyword(query, limit);
   }
 
-  const matches = (data ?? []) as MatchRow[];
-  if (matches.length === 0) {
-    return [];
-  }
+  try {
+    await ensureExpenseEmbeddings();
 
-  const expenseIds = matches.map((row) => row.expense_id);
-  const { data: expenses, error: expenseError } = await supabase
-    .from("expenses")
-    .select("id, amount, category, description, date")
-    .in("id", expenseIds);
+    const queryEmbedding = await embedText(query);
+    const supabase = createSupabaseAdmin();
 
-  if (expenseError) {
-    throw new Error(`支出データの取得に失敗しました: ${expenseError.message}`);
-  }
+    const { data, error } = await supabase.rpc("match_expense_embeddings", {
+      query_embedding: queryEmbedding,
+      match_count: limit,
+      match_threshold: 0.25,
+    });
 
-  const expenseMap = new Map(
-    (expenses ?? []).map((row) => [row.id as string, row as ExpenseJoinRow & { id: string }]),
-  );
-
-  return matches
-    .map((match) => {
-      const expense = expenseMap.get(match.expense_id);
-      if (!expense) {
-        return null;
+    if (error) {
+      if (error.message.includes("match_expense_embeddings")) {
+        throw new Error(
+          "ベクトル検索関数が未設定です。Supabase SQL Editor で docs/supabase/rag-functions.sql を実行してください。",
+        );
       }
+      throw new Error(`ベクトル検索に失敗しました: ${error.message}`);
+    }
 
-      return {
-        id: match.id,
-        expenseId: match.expense_id,
-        content: match.content,
-        similarity: match.similarity,
-        amount: expense.amount,
-        category: expense.category,
-        description: expense.description,
-        date: expense.date,
-      };
-    })
-    .filter((source): source is ChatSource => source !== null);
+    const matches = (data ?? []) as MatchRow[];
+    if (matches.length === 0) {
+      return [];
+    }
+
+    const expenseIds = matches.map((row) => row.expense_id);
+    const { data: expenses, error: expenseError } = await supabase
+      .from("expenses")
+      .select("id, amount, category, description, date")
+      .in("id", expenseIds);
+
+    if (expenseError) {
+      throw new Error(`支出データの取得に失敗しました: ${expenseError.message}`);
+    }
+
+    const expenseMap = new Map(
+      (expenses ?? []).map((row) => [
+        row.id as string,
+        row as ExpenseJoinRow & { id: string },
+      ]),
+    );
+
+    return matches
+      .map((match) => {
+        const expense = expenseMap.get(match.expense_id);
+        if (!expense) {
+          return null;
+        }
+
+        return {
+          id: match.id,
+          expenseId: match.expense_id,
+          content: match.content,
+          similarity: match.similarity,
+          amount: expense.amount,
+          category: expense.category,
+          description: expense.description,
+          date: expense.date,
+        };
+      })
+      .filter((source): source is ChatSource => source !== null);
+  } catch (error) {
+    console.warn(
+      "ベクトル検索に失敗したためキーワード検索に切り替えます:",
+      error,
+    );
+    return retrieveRelevantExpensesByKeyword(query, limit);
+  }
 }
 
 export async function buildSummaryContext(): Promise<string> {

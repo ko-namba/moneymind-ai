@@ -3,23 +3,27 @@
 import { useState } from "react";
 import { ExpenseEditForm } from "@/components/ExpenseEditForm";
 import { formatYen } from "@/lib/expenses/format";
-import type { Expense, ExpenseInput } from "@/types/expense";
+import type { Expense, ExpenseCategory, ExpenseInput } from "@/types/expense";
 
 type ExpenseListProps = {
   expenses: Expense[];
   loading?: boolean;
+  title?: string;
   emptyMessage?: string;
   onDelete: (id: string) => Promise<void>;
   onEdit: (id: string, input: ExpenseInput) => Promise<void>;
+  onCategorySelect?: (category: ExpenseCategory) => void;
   showTitle?: boolean;
 };
 
 export function ExpenseList({
   expenses,
   loading = false,
+  title = "支出一覧",
   emptyMessage = "支出がまだありません。",
   onDelete,
   onEdit,
+  onCategorySelect,
   showTitle = true,
 }: ExpenseListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -72,7 +76,7 @@ export function ExpenseList({
 
   return (
     <div className="mm-section">
-      {showTitle && <h2 className="mm-section-title">支出一覧</h2>}
+      {showTitle && <h2 className="mm-section-title">{title}</h2>}
 
       {deleteError && <p className="mm-alert-error">{deleteError}</p>}
 
@@ -92,38 +96,49 @@ export function ExpenseList({
                 />
               ) : (
                 <div className="flex items-center justify-between gap-4">
-                  <button
-                    type="button"
-                    className="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-4 text-left"
-                    onClick={() => setEditingId(expense.id)}
-                    disabled={deletingId === expense.id}
-                    aria-label={`${expense.category} ${formatYen(expense.amount)} を編集`}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="mm-badge">{expense.category}</span>
+                  <div className="flex min-w-0 flex-1 items-center gap-2">
+                    {onCategorySelect ? (
+                      <button
+                        type="button"
+                        className="mm-badge shrink-0 cursor-pointer"
+                        onClick={() => onCategorySelect(expense.category)}
+                        aria-label={`${expense.category} の内訳を見る`}
+                      >
+                        {expense.category}
+                      </button>
+                    ) : (
+                      <span className="mm-badge shrink-0">{expense.category}</span>
+                    )}
+                    <button
+                      type="button"
+                      className="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-4 text-left"
+                      onClick={() => setEditingId(expense.id)}
+                      disabled={deletingId === expense.id}
+                      aria-label={`${expense.category} ${formatYen(expense.amount)} を編集`}
+                    >
+                      <div className="min-w-0 flex-1">
                         <span
                           className="text-sm"
                           style={{ color: "var(--mf-text)" }}
                         >
                           {expense.date}
                         </span>
+                        <p
+                          className="mt-0.5 truncate text-sm"
+                          style={{ color: "var(--mf-text-strong)" }}
+                        >
+                          {expense.description || "（メモなし）"}
+                        </p>
                       </div>
-                      <p
-                        className="mt-0.5 truncate text-sm"
+
+                      <span
+                        className="shrink-0 whitespace-nowrap font-semibold"
                         style={{ color: "var(--mf-text-strong)" }}
                       >
-                        {expense.description || "（メモなし）"}
-                      </p>
-                    </div>
-
-                    <span
-                      className="shrink-0 whitespace-nowrap font-semibold"
-                      style={{ color: "var(--mf-text-strong)" }}
-                    >
-                      {formatYen(expense.amount)}
-                    </span>
-                  </button>
+                        {formatYen(expense.amount)}
+                      </span>
+                    </button>
+                  </div>
 
                   <button
                     type="button"

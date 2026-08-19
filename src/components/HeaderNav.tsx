@@ -13,7 +13,7 @@ export function HeaderNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-1.5 sm:gap-2">
+    <nav className="hidden gap-1.5 sm:flex sm:gap-2">
       {navItems.map((item) => {
         const isActive =
           item.href === "/"

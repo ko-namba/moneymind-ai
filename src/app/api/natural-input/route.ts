@@ -1,5 +1,5 @@
 import { parseNaturalExpenseInput } from "@/lib/ai/parse-natural-expense";
-import { toOpenAIUserMessage } from "@/lib/ai/errors";
+import { toAIUserMessage, toOpenAIUserMessage } from "@/lib/ai/errors";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { naturalInputRequestSchema } from "@/lib/validation/natural-input";
 import { ZodError } from "zod";
@@ -21,8 +21,9 @@ export async function POST(request: Request) {
     }
 
     if (error instanceof Error) {
-      if (error.message.includes("OPENAI_API_KEY")) {
-        return jsonError(error.message, 503);
+      const aiMessage = toAIUserMessage(error);
+      if (aiMessage) {
+        return jsonError(aiMessage, 503);
       }
 
       const openAIMessage = toOpenAIUserMessage(error);

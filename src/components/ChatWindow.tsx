@@ -65,7 +65,7 @@ export function ChatWindow() {
 
   return (
     <div className="mm-panel flex h-[calc(100vh-11rem)] min-h-[520px] flex-col">
-      <div className="flex-1 space-y-6 overflow-y-auto py-4">
+      <div className="flex-1 space-y-6 overflow-y-auto p-6">
         {messages.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-sm" style={{ color: "var(--mf-text)" }}>
@@ -125,7 +125,7 @@ export function ChatWindow() {
       {error && <p className="mb-2 mm-alert-error">{error}</p>}
 
       <form
-        className="border-t mm-divider pt-6"
+        className="border-t mm-divider p-6"
         onSubmit={(event) => {
           event.preventDefault();
           void sendMessage(input);

@@ -1,4 +1,4 @@
-import { toOpenAIUserMessage } from "@/lib/ai/errors";
+import { toAIUserMessage, toOpenAIUserMessage, isRecoverableAIError } from "@/lib/ai/errors";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { answerExpenseQuestion } from "@/lib/rag/chat";
 import { chatRequestSchema } from "@/lib/validation/chat";
@@ -17,17 +17,19 @@ export async function POST(request: Request) {
       return jsonError(message, 400);
     }
 
+    const aiMessage = toAIUserMessage(error);
+    if (aiMessage) {
+      console.error("POST /api/chat", error);
+      return jsonError(aiMessage, 503);
+    }
+
     const openAIMessage = toOpenAIUserMessage(error);
-    if (openAIMessage) {
+    if (openAIMessage && !isRecoverableAIError(error)) {
       console.error("POST /api/chat", error);
       return jsonError(openAIMessage, 429);
     }
 
     if (error instanceof Error) {
-      if (error.message.includes("OPENAI_API_KEY")) {
-        return jsonError(error.message, 503);
-      }
-
       console.error("POST /api/chat", error);
       return jsonError(error.message, 422);
     }

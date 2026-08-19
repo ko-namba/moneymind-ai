@@ -1,3 +1,8 @@
+import { getAIProvider, getGeminiKeyIssue, isGeminiEnabled } from "@/lib/ai/config";
+import { toGeminiUserMessage } from "@/lib/ai/errors";
+import { isGeminiQuotaError } from "@/lib/ai/gemini";
+import { parseNaturalExpenseWithGemini } from "@/lib/ai/parse-natural-expense-gemini";
+import { parseNaturalExpenseWithRules } from "@/lib/ai/parse-natural-expense-rules";
 import {
   createOpenAIClient,
   REGISTER_EXPENSE_TOOL_NAME,
@@ -29,7 +34,7 @@ function buildSystemPrompt(today: string): string {
   ].join("\n");
 }
 
-export async function parseNaturalExpenseInput(
+async function parseNaturalExpenseWithOpenAI(
   text: string,
 ): Promise<ParsedNaturalExpense> {
   const client = createOpenAIClient();
@@ -75,4 +80,47 @@ export async function parseNaturalExpenseInput(
     `「${input.description}」を ${input.category} ${input.amount.toLocaleString("ja-JP")}円として解析しました。`;
 
   return { input, message: summary };
+}
+
+export async function parseNaturalExpenseInput(
+  text: string,
+): Promise<ParsedNaturalExpense> {
+  const provider = getAIProvider();
+
+  if (provider === "free") {
+    return parseNaturalExpenseWithRules(text);
+  }
+
+  try {
+    if (provider === "gemini") {
+      const keyIssue = getGeminiKeyIssue();
+      if (keyIssue) {
+        throw new Error(keyIssue);
+      }
+      return await parseNaturalExpenseWithGemini(text);
+    }
+    return await parseNaturalExpenseWithOpenAI(text);
+  } catch (error) {
+    const geminiMessage = toGeminiUserMessage(error);
+    if (
+      geminiMessage &&
+      provider === "gemini" &&
+      !isGeminiQuotaError(error)
+    ) {
+      throw new Error(geminiMessage);
+    }
+
+    if (
+      isRecoverableAIError(error) &&
+      provider === "openai" &&
+      isGeminiEnabled()
+    ) {
+      try {
+        return await parseNaturalExpenseWithGemini(text);
+      } catch {
+        // Gemini も失敗した場合はルールベースへ
+      }
+    }
+    return parseNaturalExpenseWithRules(text);
+  }
 }

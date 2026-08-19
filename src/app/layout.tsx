@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { M_PLUS_Rounded_1c } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { MobileNav } from "@/components/MobileNav";
 import "./globals.css";
 
 const mPlusRounded = M_PLUS_Rounded_1c({
@@ -23,10 +24,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={`${mPlusRounded.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col pb-16 sm:pb-0">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <MobileNav />
       </body>
     </html>
   );
