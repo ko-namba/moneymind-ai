@@ -2,10 +2,6 @@ import { jsonError, jsonOk } from "@/lib/api/response";
 import { extractErrorMessage } from "@/lib/db/connection-error";
 
 export async function GET() {
-  if (process.env.NODE_ENV === "production") {
-    return jsonError("Not found", 404);
-  }
-
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const hasAnonKey = Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   const hasServiceKey = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
