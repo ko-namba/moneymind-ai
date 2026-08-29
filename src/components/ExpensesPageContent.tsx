@@ -57,20 +57,16 @@ export function ExpensesPageContent() {
     <div className="mm-page">
       {error && <p className="mm-alert-error">{error}</p>}
 
-      <section className="mm-page-section">
+      <section className="mm-page-section space-y-4">
         <MonthNavigator year={year} month={month} onChange={handleMonthChange} />
-      </section>
 
-      {!loading && monthExpenses.length > 0 && (
-        <section className="mm-page-section">
+        {!loading && monthExpenses.length > 0 && (
           <CategoryBreakdownPicker
             expenses={monthExpenses}
             onSelectCategory={setSelectedCategory}
           />
-        </section>
-      )}
+        )}
 
-      <section className="mm-page-section">
         <ExpenseList
           expenses={monthExpenses}
           loading={loading}
