@@ -58,14 +58,6 @@ export function ExpensesPageContent() {
       {error && <p className="mm-alert-error">{error}</p>}
 
       <section className="mm-page-section">
-        <NaturalInput onSubmit={addExpense} />
-      </section>
-
-      <section className="mm-page-section">
-        <ExpenseForm onSubmit={addExpense} />
-      </section>
-
-      <section className="mm-page-section">
         <MonthNavigator year={year} month={month} onChange={handleMonthChange} />
       </section>
 
@@ -88,6 +80,14 @@ export function ExpensesPageContent() {
           onEdit={editExpense}
           onCategorySelect={setSelectedCategory}
         />
+      </section>
+
+      <section className="mm-page-section">
+        <NaturalInput onSubmit={addExpense} />
+      </section>
+
+      <section className="mm-page-section">
+        <ExpenseForm onSubmit={addExpense} />
       </section>
 
       {selectedCategory && (
