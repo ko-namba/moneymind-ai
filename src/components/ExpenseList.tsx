@@ -159,7 +159,7 @@ export function ExpenseList({
                       void handleDelete(expense.id);
                     }}
                     disabled={deletingId === expense.id}
-                    className="mm-btn-ghost justify-self-end"
+                    className="mm-btn-danger justify-self-end"
                   >
                     {deletingId === expense.id ? "削除中..." : "削除"}
                   </button>

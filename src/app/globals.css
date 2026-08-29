@@ -16,6 +16,8 @@
   --mf-text-strong: #26241f;
   --mf-border: #d8cfb8;
   --mf-divider: #e2dac6;
+  --mf-danger: #b56a72;
+  --mf-danger-hover: #9a4f58;
   --mf-radius-sm: 1rem;
   --mf-radius-md: 1.25rem;
   --mf-radius-lg: 1.75rem;
@@ -224,7 +226,20 @@ body {
   }
 
   .mm-btn-ghost:hover {
-    color: #a8334c;
+    color: var(--mf-danger-hover);
+    transform: translateY(-1px);
+  }
+
+  .mm-btn-danger {
+    @apply text-xs font-medium disabled:cursor-not-allowed disabled:opacity-60;
+    color: var(--mf-danger);
+    transition:
+      color 0.55s var(--mm-ease-smooth),
+      transform 0.85s var(--mm-ease-smooth);
+  }
+
+  .mm-btn-danger:hover {
+    color: var(--mf-danger-hover);
     transform: translateY(-1px);
   }
 
