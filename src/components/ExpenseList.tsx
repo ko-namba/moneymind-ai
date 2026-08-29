@@ -95,56 +95,71 @@ export function ExpenseList({
                   onSubmit={(input) => handleEdit(expense.id, input)}
                 />
               ) : (
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex min-w-0 flex-1 items-center gap-2">
-                    {onCategorySelect ? (
-                      <button
-                        type="button"
-                        className="mm-badge shrink-0 cursor-pointer"
-                        onClick={() => onCategorySelect(expense.category)}
-                        aria-label={`${expense.category} の内訳を見る`}
-                      >
-                        {expense.category}
-                      </button>
-                    ) : (
-                      <span className="mm-badge shrink-0">{expense.category}</span>
-                    )}
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className="grid cursor-pointer grid-cols-[4rem_6.75rem_minmax(0,1fr)_auto_auto] items-center gap-x-2 text-left sm:gap-x-3"
+                  onClick={() => {
+                    if (deletingId !== expense.id) {
+                      setEditingId(expense.id);
+                    }
+                  }}
+                  onKeyDown={(event) => {
+                    if (
+                      deletingId !== expense.id &&
+                      (event.key === "Enter" || event.key === " ")
+                    ) {
+                      event.preventDefault();
+                      setEditingId(expense.id);
+                    }
+                  }}
+                  aria-label={`${expense.category} ${formatYen(expense.amount)} を編集`}
+                >
+                  {onCategorySelect ? (
                     <button
                       type="button"
-                      className="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-4 text-left"
-                      onClick={() => setEditingId(expense.id)}
-                      disabled={deletingId === expense.id}
-                      aria-label={`${expense.category} ${formatYen(expense.amount)} を編集`}
+                      className="mm-badge justify-self-start text-left cursor-pointer"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onCategorySelect(expense.category);
+                      }}
+                      aria-label={`${expense.category} の内訳を見る`}
                     >
-                      <div className="min-w-0 flex-1">
-                        <span
-                          className="text-sm"
-                          style={{ color: "var(--mf-text)" }}
-                        >
-                          {expense.date}
-                        </span>
-                        <p
-                          className="mt-0.5 truncate text-sm"
-                          style={{ color: "var(--mf-text-strong)" }}
-                        >
-                          {expense.description || "（メモなし）"}
-                        </p>
-                      </div>
-
-                      <span
-                        className="shrink-0 whitespace-nowrap font-semibold"
-                        style={{ color: "var(--mf-text-strong)" }}
-                      >
-                        {formatYen(expense.amount)}
-                      </span>
+                      {expense.category}
                     </button>
-                  </div>
+                  ) : (
+                    <span className="mm-badge justify-self-start">
+                      {expense.category}
+                    </span>
+                  )}
+
+                  <span
+                    className="whitespace-nowrap text-sm tabular-nums"
+                    style={{ color: "var(--mf-text)" }}
+                  >
+                    {expense.date}
+                  </span>
+                  <span
+                    className="min-w-0 truncate text-sm"
+                    style={{ color: "var(--mf-text-strong)" }}
+                  >
+                    {expense.description || "（メモなし）"}
+                  </span>
+                  <span
+                    className="whitespace-nowrap text-right font-semibold"
+                    style={{ color: "var(--mf-text-strong)" }}
+                  >
+                    {formatYen(expense.amount)}
+                  </span>
 
                   <button
                     type="button"
-                    onClick={() => void handleDelete(expense.id)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      void handleDelete(expense.id);
+                    }}
                     disabled={deletingId === expense.id}
-                    className="mm-btn-ghost shrink-0"
+                    className="mm-btn-ghost justify-self-end"
                   >
                     {deletingId === expense.id ? "削除中..." : "削除"}
                   </button>
