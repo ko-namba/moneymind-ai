@@ -8,7 +8,7 @@ import { createSupabaseAdmin } from "@/lib/db/supabase";
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
   if (
-    cronSecret &&
+    !cronSecret ||
     request.headers.get("authorization") !== `Bearer ${cronSecret}`
   ) {
     return jsonError("Unauthorized", 401);

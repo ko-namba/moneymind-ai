@@ -1,5 +1,5 @@
 import { listExpenses, createExpense } from "@/lib/expenses/repository";
-import { jsonError, jsonOk } from "@/lib/api/response";
+import { jsonError, jsonOk, publicErrorMessage } from "@/lib/api/response";
 import {
   expenseCategorySchema,
   expenseInputSchema,
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     }
     console.error("GET /api/expenses", error);
     return jsonError(
-      error instanceof Error ? error.message : "支出一覧の取得に失敗しました。",
+      publicErrorMessage(error, "支出一覧の取得に失敗しました。"),
       500,
     );
   }
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     }
     console.error("POST /api/expenses", error);
     return jsonError(
-      error instanceof Error ? error.message : "支出の登録に失敗しました。",
+      publicErrorMessage(error, "支出の登録に失敗しました。"),
       500,
     );
   }

@@ -2,7 +2,7 @@ import {
   updateExpense,
   deleteExpense,
 } from "@/lib/expenses/repository";
-import { jsonError, jsonOk } from "@/lib/api/response";
+import { jsonError, jsonOk, publicErrorMessage } from "@/lib/api/response";
 import { expenseUpdateSchema } from "@/lib/validation/expense";
 import { ZodError } from "zod";
 
@@ -41,7 +41,7 @@ export async function PUT(request: Request, context: RouteContext) {
     }
     console.error("PUT /api/expenses/[id]", error);
     return jsonError(
-      error instanceof Error ? error.message : "支出の更新に失敗しました。",
+      publicErrorMessage(error, "支出の更新に失敗しました。"),
       500,
     );
   }
@@ -60,7 +60,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
   } catch (error) {
     console.error("DELETE /api/expenses/[id]", error);
     return jsonError(
-      error instanceof Error ? error.message : "支出の削除に失敗しました。",
+      publicErrorMessage(error, "支出の削除に失敗しました。"),
       500,
     );
   }

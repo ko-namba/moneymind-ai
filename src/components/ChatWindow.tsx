@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { sendChatMessage } from "@/lib/chat/client";
 import { SourceCitation } from "@/components/SourceCitation";
+import { CHAT_HISTORY_LIMIT } from "@/lib/validation/chat";
 import type { ChatHistoryItem, ChatMessage } from "@/types/chat";
 
 const EXAMPLE_QUESTIONS = [
@@ -41,12 +42,14 @@ export function ChatWindow() {
     setIsLoading(true);
 
     try {
-      const history: ChatHistoryItem[] = nextMessages.map((message) => ({
-        role: message.role,
-        content: message.content,
-      }));
+      const history: ChatHistoryItem[] = messages
+        .slice(-CHAT_HISTORY_LIMIT)
+        .map((message) => ({
+          role: message.role,
+          content: message.content.slice(0, 2000),
+        }));
 
-      const response = await sendChatMessage(trimmed, history.slice(0, -1));
+      const response = await sendChatMessage(trimmed, history);
 
       const assistantMessage: ChatMessage = {
         id: createMessageId(),

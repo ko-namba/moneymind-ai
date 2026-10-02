@@ -1,7 +1,12 @@
-import { jsonError, jsonOk } from "@/lib/api/response";
+import { jsonOk, notFoundResponse } from "@/lib/api/response";
 import { extractErrorMessage } from "@/lib/db/connection-error";
 
+/** 開発時の接続診断用。本番では Supabase のホスト名や設定状況を公開しない */
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return notFoundResponse();
+  }
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const hasAnonKey = Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   const hasServiceKey = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
