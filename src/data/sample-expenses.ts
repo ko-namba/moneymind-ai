@@ -1,6 +1,6 @@
 import type { ExpenseInput } from "@/types/expense";
 
-/** デモ・ポートフォリオ用サンプル支出（40件） */
+/** デモ・ポートフォリオ用サンプル支出（59件） */
 export const SAMPLE_EXPENSES: ExpenseInput[] = [
   // 2026年6月（10件）
   { date: "2026-06-02", category: "食費", description: "スーパー買い出し", amount: 3400 },
@@ -47,6 +47,29 @@ export const SAMPLE_EXPENSES: ExpenseInput[] = [
   { date: "2026-08-25", category: "娯楽", description: "映画館", amount: 2400 },
   { date: "2026-08-27", category: "食費", description: "外食ディナー", amount: 5200 },
   { date: "2026-08-28", category: "その他", description: "サブスク", amount: 980 },
+
+  // 2026年9月（15件）— 連休の旅行で交通・娯楽が多め
+  { date: "2026-09-01", category: "食費", description: "ランチ", amount: 900 },
+  { date: "2026-09-03", category: "交通", description: "電車代", amount: 580 },
+  { date: "2026-09-05", category: "食費", description: "スーパー", amount: 3800 },
+  { date: "2026-09-07", category: "日用品", description: "ドラッグストア", amount: 1450 },
+  { date: "2026-09-09", category: "娯楽", description: "配信サービス", amount: 1490 },
+  { date: "2026-09-11", category: "食費", description: "カフェ", amount: 620 },
+  { date: "2026-09-13", category: "医療", description: "歯科検診", amount: 3200 },
+  { date: "2026-09-15", category: "食費", description: "弁当", amount: 700 },
+  { date: "2026-09-19", category: "交通", description: "新幹線（旅行）", amount: 14200 },
+  { date: "2026-09-20", category: "娯楽", description: "旅館・観光", amount: 18500 },
+  { date: "2026-09-21", category: "食費", description: "旅行先の食事", amount: 4600 },
+  { date: "2026-09-23", category: "その他", description: "お土産", amount: 3300 },
+  { date: "2026-09-25", category: "食費", description: "スーパー", amount: 2900 },
+  { date: "2026-09-27", category: "日用品", description: "洗剤・消耗品", amount: 1100 },
+  { date: "2026-09-29", category: "食費", description: "外食ディナー", amount: 3800 },
+
+  // 2026年10月（4件）— 月初のみ
+  { date: "2026-10-01", category: "食費", description: "ランチ", amount: 850 },
+  { date: "2026-10-01", category: "交通", description: "電車代", amount: 580 },
+  { date: "2026-10-02", category: "食費", description: "スーパー", amount: 3200 },
+  { date: "2026-10-03", category: "食費", description: "カフェ", amount: 650 },
 ];
 
 export const SAMPLE_EXPENSE_COUNT = SAMPLE_EXPENSES.length;
