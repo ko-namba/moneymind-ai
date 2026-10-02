@@ -386,14 +386,14 @@ export function CategoryChart({
     0,
   );
 
-  // 左右の列に交互に振り分ける（金額が大きい順に左→右→左…）
+  // 金額が大きい順に、左列の上→下、続けて右列の上→下へ並べる（奇数件なら左列が1件多い）
   const { leftItems, rightItems } = useMemo(() => {
-    const left: { item: CategoryTotal; index: number }[] = [];
-    const right: { item: CategoryTotal; index: number }[] = [];
-    sortedData.forEach((item, index) => {
-      (index % 2 === 0 ? left : right).push({ item, index });
-    });
-    return { leftItems: left, rightItems: right };
+    const items = sortedData.map((item, index) => ({ item, index }));
+    const leftCount = Math.ceil(items.length / 2);
+    return {
+      leftItems: items.slice(0, leftCount),
+      rightItems: items.slice(leftCount),
+    };
   }, [sortedData]);
 
   const hoveredItem =
